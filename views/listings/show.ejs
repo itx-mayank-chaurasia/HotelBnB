@@ -1,0 +1,127 @@
+<% layout("/layouts/boilerplate.ejs") %>
+    <script>
+        const geoData = JSON.parse('<%- JSON.stringify(data) %>');
+        // const geoData = data;
+        console.log(geoData);
+
+    </script>
+    <div class="row">
+        <div class="col-10 offset-2 mt-3">
+            <h1>
+                <b>
+                    <%= listings.title %>
+                </b>
+            </h1>
+        </div>
+        <div class="col-8 offset-2">
+            <img src="<%= listings.image.url %>" class="card-img-top md show-img" alt=<%=listings.title %>>
+            <div class="card-body">
+                <ul class="list-group list-group-flush list-li">
+                    <li class="card-text">
+                        <b style="font-size: 1rem;">
+                            <i>Owned by: <%= listings.owner.username %></i>
+                        </b>
+                    </li>
+                    <li class="card-text">
+                        <b style="font-size: 1rem;">discription:</b>
+                        <%= listings.discription %>
+                    </li>
+                    <li class="card-text">
+                        <b style="font-size: 1rem;">category:</b>
+                        <%= listings.category %>
+                    </li>
+                    <li><b style="font-size: 1rem;">Price:</b> &#8377; <%= Number(
+                            listings.price).toLocaleString('en-In') %> / Night</li>
+                    <li>
+                        <b style="font-size: 1rem;">location:</b>
+                        <%= listings.location %>
+                    </li>
+                    <li>
+                        <b style="font-size: 1rem;">Country:</b>
+                        <%= listings.country %>
+                    </li>
+                </ul>
+            </div>
+            <% if(currUser && currUser._id.equals(listings.owner._id)){ %>
+                <div class="row">
+                    <div class="card-body btns"></div>
+                    <div class="mb-3 col-md-4">
+                        <a class="btn some-btn btn-dark" href="/listings/<%=listings._id%>/edit"> Edit Listing</a>
+                    </div>
+                    <div class="mb-3 col-md-4">
+                        <form method="POST" action="/listings/<%=listings._id%>?_method=delete">
+                            <button class="btn btn-dark">Delete Listing</button>
+                        </form>
+                    </div>
+                </div>
+                <% } %>
+
+        </div>
+
+        <div class="col-10 offset-2 mt-3">
+            <% if(currUser){ %>
+                <h4>Leave a Review</h4>
+                <form method="post" action="/listings/<%= listings.id %>/review" class="needs-validation" novalidate>
+                    <label for="rating" class="form-label">Rating</label>
+                    <fieldset class="starability-slot">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked
+                            aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
+
+
+
+
+                    <div class="mb-3 mt-3">
+                        <label for="comment" class="form-label">Comment:</label>
+                        <textarea id="comment" name="review[comment]" type="text" placeholder="write review here.."
+                            class="form-control" required></textarea>
+                        <div class="invalid-feedback">Please enter short comment</div>
+                    </div>
+                    <button class="btn btn-dark">submit</button>
+                </form>
+                <% } %>
+                    <p> <b>All Reviews</b> </p>
+                    <div class="row">
+
+                        <% for(review of listings.reviews){ %>
+                            <div class="card col-10 col-lg-5 mb-3 ms-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">@<%= review.auther.username %>
+                                    </h5>
+                                    <p class=" card-text starability-result" data-rating="<%= review.rating %>"></p>
+                                    <p class="card-text">
+                                        <%= review.comment %>
+                                    </p>
+                                    <% if(currUser && currUser._id.equals(review.auther._id)){ %>
+                                        <form method="post"
+                                            action="/listings/<%=listings.id%>/review/<%=review._id%>?_method=delete">
+                                            <button class="btn btn-outline-dark mb-3">Delete</button>
+                                        </form>
+                                        <% } %>
+                                </div>
+                            </div>
+                            <% } %>
+                    </div>
+        </div>
+        <hr>
+
+        <div class="col-8 offset-2 mt-3 mb-3">
+            <h1> where you all 'll be</h1>
+            <div id="map">
+            </div>
+        </div>
+
+    </div>
+    <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/js/map.js"></script> -->
